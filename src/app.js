@@ -1,24 +1,46 @@
 import express, { json } from 'express'
-const users =[
-    {id:1, name:"Juan", age:32},
-    {id:2, name:"Bruno", age:12},
-    {id:3, name:"Tiziana", age:11},
-    {id:4, name:"Stefano", age:23},
-]
+import ProductManager from "../productManager.js" 
 
 
 const app = express()
 app.use(express.json())
 
-app.get('/', (req,res) => res.status(200).json({message: 'ok'}))
-app.get('/users',(req,res) => {
-    req.status(200).json({users})
-})
-app.listen(8080,() => console.log('Server Up'))
+const productsBase = new ProductManager('products.json')
 
-app.post('/users', (req,res) => {
-    const { id, name, age} = req.query
-    const newUser = {id:parseInt(id), name, age:parseInt(age)}
-    users.push(newUser)
-    res.status(201).json({message:'usuario creado', data: newUser})
+
+
+app.get('/',async (req, res) => {
+
+        const products = await productsBase.getProducts();
+        console.log('products:' ,products)
+     res.json(products)
+   
+  });
+  
+
+  app.get('/products',async (req, res) => {
+    const limit = req.query.limit
+    let products = await productsBase.getProducts()
+
+    if(!limit){
+        res.send({productos:products})
+    }else{
+    products = products.slice(0, limit)
+    res.send({productos:products} )
+    }
 })
+
+
+app.get('/products/:pid',async (req, res) => {
+    const pid = req.params.pid
+    const product = await productsBase.getProductById(pid);
+    res.send({productos:product} )
+    
+})
+  
+  app.listen(8080, () => {
+    console.log(`Server running on port ${8080}`)
+  })
+
+
+
