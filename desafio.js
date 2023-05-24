@@ -9,12 +9,21 @@ class ProductManager{
 
 
     #cumpleRequisitos = (title, description, price, thumbail, code, stock) => {
-        const validarDatos = !title || !description || !price || !thumbail || !code || !stock;
-        const validarCodigo = this.#productos.find(item => item.code === code);
-        return validarDatos ? (console.log("Faltan Datos"), false):
-               validarCodigo ? (console.log("El código está duplicado"), false) :
-               true;
+      const validarDatos = !title || !description || !price || !thumbail || !code || !stock;
+      const validarCodigo = this.#productos.find(item => item.code === code);
+      
+      if (validarDatos) {
+        console.log("Faltan Datos");
+        return false;
       }
+      
+      if (validarCodigo) {
+        console.log("El código está duplicado");
+        return false;
+      }
+      
+      return true;
+    }
 
 
 
